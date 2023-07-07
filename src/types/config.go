@@ -1,13 +1,16 @@
 package types
 
 type EcosConfig struct {
+	Spec             EcosSpec
+	TempPaths        TempPaths
 	PackageVariables EcosPackageVariables
-	StateOpts        EcosStateOptions
+}
+
+type TempPaths struct {
+	Base       string
+	Components string
 }
 
 type EcosPackageVariables struct {
 	VariableMap map[string]string
-}
-
-type EcosStateOptions struct {
 }

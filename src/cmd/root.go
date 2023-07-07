@@ -2,10 +2,8 @@ package cmd
 
 import (
 	"fmt"
-	"os"
 
 	"github.com/mikevanhemert/ecos/src/config/lang"
-	"github.com/mikevanhemert/ecos/src/pkg/message"
 	"github.com/mikevanhemert/ecos/src/types"
 	"github.com/spf13/cobra"
 )
@@ -28,29 +26,17 @@ func Execute() {
 	cobra.CheckErr(rootCmd.Execute())
 }
 
-func init() {
-	rootCmd.PersistentFlags().StringVarP(&logLevel, "log-level", "l", "info", lang.RootCmdFlagLogLevel)
+/*
+	Commands, flags, all that jazz
 
-	match := map[string]message.LogLevel{
-		"warn":  message.WarnLevel,
-		"info":  message.InfoLevel,
-		"debug": message.DebugLevel,
-		"trace": message.TraceLevel,
-	}
+	ecos collect
+		terraform providers mirror [DIR]
+		terraform get
 
-	// No log level set, so use the default
-	if logLevel != "" {
-		if lvl, ok := match[logLevel]; ok {
-			message.SetLogLevel(lvl)
-			message.Debug("Log level set to " + logLevel)
-		} else {
-			message.Warn(lang.RootCmdErrInvalidLogLevel)
-		}
-	}
+	ecos apply [--set KEY=value]
+		terraform init -plugin-dir=[DIR] -get=false -get-plugins=false
+		terraform apply
 
-	// Disable progress bars for CI envs
-	if os.Getenv("CI") == "true" {
-		message.Debug("CI environment detected, disabling progress bars")
-		message.NoProgress = true
-	}
-}
+	ecos update STATE_FILE [--set KEY=value]
+		terraform init -plugin-dir=[DIR] -get=false -get-plugins=false
+*/

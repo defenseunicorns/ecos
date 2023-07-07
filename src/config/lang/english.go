@@ -9,17 +9,19 @@ const (
 
 	RootCmdErrInvalidLogLevel = "Invalid log level. Valid options are: warn, info, debug, trace."
 
-	// ecos package command
-	CmdPackageShort = "Ecos package commands for creating, applying, and repairing packages"
+	// ecos collect command
+	CmdCollectShort = "Collects and packages infrastructure resources into an Ecos package"
+	CmdCollectLong  = "Builds an archive of resources and dependencies defined by the 'ecos.yaml' in the specified directory."
 
-	CmdPackageCreateShort = "Creates an Ecos package from a given directory of the current dirctory"
-	CmdPackageCreateLong  = "Builds an archive of resources and dependencies defined by the 'ecos.yaml' in the specified directory."
+	// ecos apply command
+	CmdApplyShort = "Applies the Ecos package Terraform to a new environment"
+	CmdApplyLong  = "Unpacks Terraform resources and dependencies from an Ecos package archive and applies them to a new environment."
 
-	CmdPackageApplyShort = "Applies the Ecos package Terraform from a local file or URL (runs offline)"
-	CmdPackageApplyLong  = "Unpacks Terraform resources and dependencies from an Ecos package archive and applies them."
+	CmdApplyFlagSet = "Specify package variables (KEY=value)"
 
-	CmdPackageApplyFlagSet = "Specify package variables (KEY=value)"
+	// ecos update command
+	CmdUpdateShort = "Applies the Ecos package Terraform as an update to an existing environment"
+	CmdUpdateLong  = "Unpacks Terraform resources and dependencies from an Ecos package archive and applies them as an update to an existing environment."
 
-	// ecos state command
-
+	CmdUpdateFlagSet = "Specify package variables (KEY=value)"
 )
