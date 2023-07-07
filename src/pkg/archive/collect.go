@@ -1,4 +1,4 @@
-package collect
+package archive
 
 import (
 	"fmt"
@@ -14,7 +14,7 @@ type Collect struct {
 	config *types.EcosConfig
 }
 
-func New(config *types.EcosConfig) (*Collect, error) {
+func NewCollect(config *types.EcosConfig) (*Collect, error) {
 	if config == nil {
 		return nil, fmt.Errorf("Ecos spec not provided")
 	}
@@ -27,36 +27,25 @@ func New(config *types.EcosConfig) (*Collect, error) {
 	)
 
 	// Create a temp directory for the package
-	if collect.config.TempPaths, err = createPaths(); err != nil {
+	if collect.config.TempPaths.Base, err = utils.MakeTempDir(""); err != nil {
 		return nil, fmt.Errorf("Unable to create package temp paths: %w", err)
 	}
 
 	return collect, nil
 }
 
-func NewOrDie(config *types.EcosConfig) *Collect {
+func NewOrDieCollect(config *types.EcosConfig) *Collect {
 	var (
 		err     error
 		collect *Collect
 	)
 
-	if collect, err = New(config); err != nil {
+	if collect, err = NewCollect(config); err != nil {
 		fmt.Printf("Unable to prepare for collect: %s", err.Error())
 		os.Exit(1)
 	}
 
 	return collect
-}
-
-func createPaths() (paths types.TempPaths, err error) {
-	basePath, err := utils.MakeTempDir("")
-	paths = types.TempPaths{
-		Base: basePath,
-
-		Components: filepath.Join(basePath, "components"),
-	}
-
-	return paths, err
 }
 
 func (c *Collect) ClearTempPaths() {
@@ -78,14 +67,14 @@ func (c *Collect) Collect() error {
 		fmt.Printf("\nCOMPONENT %s\n\n", strings.ToUpper(component.Name))
 
 		// copy dir to temp location
-		if err := utils.Copy(component.Name, filepath.Join(c.config.TempPaths.Components, component.Name)); err != nil {
+		if err := utils.Copy(component.Name, filepath.Join(c.config.TempPaths.Base, "components", component.Name)); err != nil {
 			return fmt.Errorf("Unable to copy component %s: %w", component.Name, err)
 		}
 
 		originalDir, _ := os.Getwd()
 
 		// Providers: terraform providers mirror
-		if err := os.Chdir(filepath.Join(c.config.TempPaths.Components, component.Name)); err != nil {
+		if err := os.Chdir(filepath.Join(c.config.TempPaths.Base, "components", component.Name)); err != nil {
 			return fmt.Errorf("Unable to access directory '%s': %w", component.Name, err)
 		}
 

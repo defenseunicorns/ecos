@@ -1,4 +1,4 @@
-package apply
+package archive
 
 import (
 	"fmt"
@@ -16,7 +16,7 @@ type Apply struct {
 	config      *types.EcosConfig
 }
 
-func New(archiveName string) (*Apply, error) {
+func NewApply(archiveName string) (*Apply, error) {
 	// Create a temp directory
 	var (
 		err   error
@@ -33,13 +33,13 @@ func New(archiveName string) (*Apply, error) {
 	return apply, nil
 }
 
-func NewOrDie(archiveName string) *Apply {
+func NewOrDieApply(archiveName string) *Apply {
 	var (
 		err   error
 		apply *Apply
 	)
 
-	if apply, err = New(archiveName); err != nil {
+	if apply, err = NewApply(archiveName); err != nil {
 		fmt.Printf("Unable to prepare for apply: %s", err)
 		os.Exit(1)
 	}
@@ -68,6 +68,8 @@ func (a *Apply) Apply() error {
 		if err := utils.ExecCommand("terraform", "init", "-plugin-dir", "providers", "-get=false"); err != nil {
 			return fmt.Errorf("Unable to initialize Terraform: %w", err)
 		}
+
+		_ = os.RemoveAll(filepath.Join(a.config.TempPaths.Base, "components", component.Name, "providers"))
 
 		// terraform apply
 		// TODO use variables defined in spec.component[].variables

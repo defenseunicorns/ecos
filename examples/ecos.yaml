@@ -2,8 +2,8 @@ kind: EcosPackage
 ecosversion: 0.0.1
 metadata:
   name: first-light
-  version: 1
+  version: 2
 components:
-- name: s3-only
+- name: s3
 
 

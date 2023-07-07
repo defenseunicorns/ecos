@@ -1,7 +1,7 @@
 
 # Create the S3 bucket with versioning and server-side  encryption
 resource "aws_s3_bucket" "ecos_test_bucket" {
-  bucket = "ecos-test"
+  bucket = "ecos-test-updated"
 }
 
 # Block all public access

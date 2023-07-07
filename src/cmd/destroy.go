@@ -2,8 +2,10 @@ package cmd
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/mikevanhemert/ecos/src/config/lang"
+	"github.com/mikevanhemert/ecos/src/pkg/archive"
 	"github.com/spf13/cobra"
 )
 
@@ -22,6 +24,15 @@ var destroyCmd = &cobra.Command{
 	Long:    lang.CmdDestroyLong,
 	Run: func(cmd *cobra.Command, args []string) {
 		archiveName := args[0]
-		fmt.Println(archiveName)
+
+		destroy := archive.NewOrDieDestroy(archiveName)
+		defer destroy.ClearTempPaths()
+
+		if err := destroy.Destroy(); err != nil {
+			fmt.Printf("Failed to destroy Terraform in archive %s: %s\n", archiveName, err)
+			os.Exit(1)
+		}
+
+		fmt.Print("\nComplete\n\n")
 	},
 }

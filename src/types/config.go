@@ -7,8 +7,7 @@ type EcosConfig struct {
 }
 
 type TempPaths struct {
-	Base       string
-	Components string
+	Base string
 }
 
 type EcosPackageVariables struct {

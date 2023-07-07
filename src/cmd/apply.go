@@ -5,7 +5,7 @@ import (
 	"os"
 
 	"github.com/mikevanhemert/ecos/src/config/lang"
-	"github.com/mikevanhemert/ecos/src/pkg/apply"
+	"github.com/mikevanhemert/ecos/src/pkg/archive"
 	"github.com/spf13/cobra"
 )
 
@@ -24,9 +24,9 @@ var applyCmd = &cobra.Command{
 	Long:    lang.CmdApplyLong,
 	Run: func(cmd *cobra.Command, args []string) {
 		archiveName := args[0]
-		// defer apply.ClearTempPaths()
 
-		apply := apply.NewOrDie(archiveName)
+		apply := archive.NewOrDieApply(archiveName)
+		defer apply.ClearTempPaths()
 
 		if err := apply.Apply(); err != nil {
 			fmt.Printf("Failed to apply Terraform from archvie %s: %s\n", archiveName, err)

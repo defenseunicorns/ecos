@@ -1,4 +1,4 @@
-package destroy
+package archive
 
 import (
 	"fmt"
@@ -16,7 +16,7 @@ type Destroy struct {
 	config      *types.EcosConfig
 }
 
-func New(archiveName string) (*Destroy, error) {
+func NewDestroy(archiveName string) (*Destroy, error) {
 	// Create a temp directory
 	var (
 		err     error
@@ -33,18 +33,22 @@ func New(archiveName string) (*Destroy, error) {
 	return destroy, nil
 }
 
-func NewOrDie(archiveName string) *Destroy {
+func NewOrDieDestroy(archiveName string) *Destroy {
 	var (
 		err     error
 		destroy *Destroy
 	)
 
-	if destroy, err = New(archiveName); err != nil {
+	if destroy, err = NewDestroy(archiveName); err != nil {
 		fmt.Printf("Unable to prepare for destroy: %s", err)
 		os.Exit(1)
 	}
 
 	return destroy
+}
+
+func (d *Destroy) ClearTempPaths() {
+	_ = os.RemoveAll(d.config.TempPaths.Base)
 }
 
 func (d *Destroy) Destroy() error {

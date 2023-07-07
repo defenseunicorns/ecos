@@ -5,7 +5,7 @@ import (
 	"os"
 
 	"github.com/mikevanhemert/ecos/src/config/lang"
-	"github.com/mikevanhemert/ecos/src/pkg/collect"
+	"github.com/mikevanhemert/ecos/src/pkg/archive"
 	"github.com/spf13/cobra"
 )
 
@@ -22,8 +22,8 @@ var collectCmd = &cobra.Command{
 	Short:   lang.CmdCollectShort,
 	Long:    lang.CmdCollectLong,
 	Run: func(cmd *cobra.Command, args []string) {
-		collect := collect.NewOrDie(&ecosConfig)
-		//defer collect.ClearTempPaths()
+		collect := archive.NewOrDieCollect(&ecosConfig)
+		defer collect.ClearTempPaths()
 
 		if err := collect.Collect(); err != nil {
 			fmt.Printf("Failed to collect Terraform resources: %s\n", err)
