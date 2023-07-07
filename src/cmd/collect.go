@@ -30,6 +30,6 @@ var collectCmd = &cobra.Command{
 			os.Exit(1)
 		}
 
-		fmt.Println("\nComplete\n\n")
+		fmt.Print("\nComplete\n\n")
 	},
 }

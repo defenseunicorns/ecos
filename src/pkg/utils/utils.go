@@ -12,8 +12,27 @@ import (
 	"sync"
 
 	goyaml "github.com/goccy/go-yaml"
+	"github.com/mholt/archiver/v3"
+	"github.com/mikevanhemert/ecos/src/types"
 	"github.com/otiai10/copy"
 )
+
+func Archive(sourceDir string, archiveName string) error {
+	archiveSrc := []string{sourceDir + string(os.PathSeparator)}
+
+	fmt.Printf("Creating archive %s\n", archiveName)
+
+	if err := archiver.Archive(archiveSrc, archiveName); err != nil {
+		return fmt.Errorf("Unable to create archive: %w", err)
+	}
+
+	_, err := os.Stat(archiveName)
+	if err != nil {
+		return fmt.Errorf("Unable to read the package archive: %w", err)
+	}
+
+	return nil
+}
 
 func Copy(source string, destination string) error {
 	return filepath.Walk(source, func(path string, info fs.FileInfo, err error) error {
@@ -49,35 +68,6 @@ func CreateDirectory(path string, mode os.FileMode) error {
 		return os.MkdirAll(path, mode)
 	}
 	return nil
-}
-
-func InvalidPath(path string) bool {
-	_, err := os.Stat(path)
-	return !os.IsPermission(err) && err != nil
-}
-
-func MakeTempDir(tmpDir string) (string, error) {
-	// Create the base tmp directory if it is specified.
-	if tmpDir != "" {
-		if err := CreateDirectory(tmpDir, 0700); err != nil {
-			return "", err
-		}
-	}
-
-	tmp, err := os.MkdirTemp(tmpDir, "ecos-")
-	fmt.Printf("Using temp path: '%s'\n", tmp)
-	return tmp, err
-}
-
-func ReadYaml(path string, spec any) error {
-	fmt.Printf("Loading ecos spec %s\n", path)
-
-	file, err := os.ReadFile(path)
-	if err != nil {
-		return err
-	}
-
-	return goyaml.Unmarshal(file, spec)
 }
 
 func ExecCommand(command string, args ...string) error {
@@ -137,6 +127,52 @@ func ExecCommand(command string, args ...string) error {
 	fmt.Println()
 
 	return nil
+}
+
+func InvalidPath(path string) bool {
+	_, err := os.Stat(path)
+	return !os.IsPermission(err) && err != nil
+}
+
+func MakeTempDir(tmpDir string) (string, error) {
+	// Create the base tmp directory if it is specified.
+	if tmpDir != "" {
+		if err := CreateDirectory(tmpDir, 0700); err != nil {
+			return "", err
+		}
+	}
+
+	tmp, err := os.MkdirTemp(tmpDir, "ecos-")
+	fmt.Printf("Using temp path: '%s'\n", tmp)
+	return tmp, err
+}
+
+func ReadYaml(path string, spec any) error {
+	fmt.Printf("Loading ecos spec %s\n", path)
+
+	file, err := os.ReadFile(path)
+	if err != nil {
+		return err
+	}
+
+	return goyaml.Unmarshal(file, spec)
+}
+
+func Unarchive(archiveName string, archiveDest string) (types.EcosSpec, error) {
+	fmt.Printf("Extracting archive %s\n", archiveName)
+
+	var spec = types.EcosSpec{}
+
+	if err := archiver.Unarchive(archiveName, archiveDest); err != nil {
+		return spec, fmt.Errorf("Unable to archive %s: %w", archiveName, err)
+	}
+
+	// Read in the Ecos Spec
+	if err := ReadYaml(filepath.Join(archiveDest, "ecos.yaml"), &spec); err != nil {
+		return spec, fmt.Errorf("Unable to read the ecos.yaml file: %w", err)
+	}
+
+	return spec, nil
 }
 
 func WriteFile(path string, data []byte) error {

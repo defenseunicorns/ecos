@@ -21,6 +21,7 @@ require (
 	github.com/mattn/go-isatty v0.0.12 // indirect
 	github.com/mattn/go-runewidth v0.0.14 // indirect
 	github.com/nwaples/rardecode v1.1.0 // indirect
+	github.com/pierrec/lz4 v2.6.1+incompatible // indirect
 	github.com/pierrec/lz4/v4 v4.1.2 // indirect
 	github.com/rivo/uniseg v0.4.4 // indirect
 	github.com/ulikunitz/xz v0.5.9 // indirect

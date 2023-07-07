@@ -24,4 +24,10 @@ const (
 	CmdUpdateLong  = "Unpacks Terraform resources and dependencies from an Ecos package archive and applies them as an update to an existing environment."
 
 	CmdUpdateFlagSet = "Specify package variables (KEY=value)"
+
+	// ecos dstroy command
+	CmdDestroyShort = "Destroys the Ecos package Terraform"
+	CmdDestroyLong  = "Unpacks Terraform resources and dependencies from an Ecos package archive and destroys them in an existing environment."
+
+	CmdDstroyFlagSet = "Specify package variables (KEY=value)"
 )
