@@ -4,4 +4,4 @@ metadata:
   name: first-light
   version: 2
 components:
-- name: s3
+  s3:
