@@ -22,10 +22,10 @@ var collectCmd = &cobra.Command{
 	Short:   lang.CmdCollectShort,
 	Long:    lang.CmdCollectLong,
 	Run: func(cmd *cobra.Command, args []string) {
-		collect := archive.NewOrDieCollect(&ecosConfig)
-		defer collect.ClearTempPaths()
+		archiver := archive.New(&ecosConfig)
+		defer archiver.ClearTempPaths()
 
-		if err := collect.Collect(); err != nil {
+		if err := archiver.Collect(); err != nil {
 			fmt.Printf("Failed to collect Terraform resources: %s\n", err)
 			os.Exit(1)
 		}

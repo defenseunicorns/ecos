@@ -23,14 +23,14 @@ var updateCmd = &cobra.Command{
 	Short:   lang.CmdApplyShort,
 	Long:    lang.CmdApplyLong,
 	Run: func(cmd *cobra.Command, args []string) {
-		originalArchive := args[0]
-		updatedArchive := args[1]
+		oldArchive := args[0]
+		archiveName := args[1]
 
-		update := archive.NewOrDieUpdate(originalArchive, updatedArchive)
-		defer update.ClearTempPaths()
+		archiver := archive.New(&ecosConfig)
+		defer archiver.ClearTempPaths()
 
-		if err := update.Update(); err != nil {
-			fmt.Printf("Failed to update Terraform archive %s with values in %s: %s\n", originalArchive, updatedArchive, err)
+		if err := archiver.Update(archiveName, oldArchive); err != nil {
+			fmt.Printf("Failed to update Terraform archive %s with values in %s: %s\n", archiveName, oldArchive, err)
 			os.Exit(1)
 		}
 

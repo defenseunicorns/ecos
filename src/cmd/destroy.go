@@ -25,10 +25,10 @@ var destroyCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		archiveName := args[0]
 
-		destroy := archive.NewOrDieDestroy(archiveName)
-		defer destroy.ClearTempPaths()
+		archiver := archive.New(&ecosConfig)
+		defer archiver.ClearTempPaths()
 
-		if err := destroy.Destroy(); err != nil {
+		if err := archiver.Destroy(archiveName); err != nil {
 			fmt.Printf("Failed to destroy Terraform in archive %s: %s\n", archiveName, err)
 			os.Exit(1)
 		}

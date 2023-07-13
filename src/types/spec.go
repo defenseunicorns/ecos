@@ -1,10 +1,10 @@
 package types
 
 type EcosSpec struct {
-	Kind        string          `json:"kind" jsonschema:"description=The kind of Ecos package,enum=EcosPackage"`
-	EcosVersion string          `json:"ecosversion" jsonschema:"description=The Ecos binary version"`
-	Metadata    EcosMetadata    `json:"metadata,omitempty" jsonschema:"description=Package metadata"`
-	Components  []EcosComponent `json:"components" jsonschema:"description=Ecos component"`
+	Kind        string                   `json:"kind" jsonschema:"description=The kind of Ecos package,enum=EcosPackage"`
+	EcosVersion string                   `json:"ecosversion" jsonschema:"description=The Ecos binary version"`
+	Metadata    EcosMetadata             `json:"metadata,omitempty" jsonschema:"description=Package metadata"`
+	Components  map[string]EcosComponent `json:"components" jsonschema:"description=Ecos component"`
 }
 
 type EcosMetadata struct {
@@ -16,17 +16,16 @@ type EcosMetadata struct {
 }
 
 type EcosComponent struct {
-	Name            string               `json:"name" jsonschema:"description=Name that identifies this component,pattern=^[a-z0-9\\-]+$"`
-	Description     string               `json:"description,omitempty" jsonschema:"description=Additional information about this component"`
-	Variables       []EcosVariable       `json:"variables,omitempty" jsonschema:"description=Variable template values"`
-	Transitives     []EcosVariable       `json:"transitives,omitempty" jsonschema:"description=Transitive variables to pass to subsequent components"`
-	OutputTemplates []EcosOutputTemplate `json:"templates,omitempty" jsonschema:"description=Templated output files and Terraform output mappings"`
+	Description     string                  `json:"description,omitempty" jsonschema:"description=Additional information about this component"`
+	Variables       map[string]EcosVariable `json:"variables,omitempty" jsonschema:"description=Variable template values"`
+	Transitives     []EcosVariable          `json:"transitives,omitempty" jsonschema:"description=Transitive variables to pass to subsequent components"`
+	OutputTemplates []EcosOutputTemplate    `json:"templates,omitempty" jsonschema:"description=Templated output files and Terraform output mappings"`
 }
 
 type EcosVariable struct {
-	Name        string `json:"name" jsonschema:"description=The variable name,pattern=^[A-Z0-9_]+$"`
 	Description string `json:"description,omitempty" jsonschema:"description=A description of the variable"`
 	Default     string `json:"default,omitempty" jsonschema:"description=The default value to use fo the variable"`
+	Override    string `json:"override,omitempty" jsonschema:"description=An override supplied by the user during ecos apply or ecos update, reserved for ecos use"`
 }
 
 type EcosOutputTemplate struct {

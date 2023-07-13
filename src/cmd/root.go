@@ -1,8 +1,6 @@
 package cmd
 
 import (
-	"fmt"
-
 	"github.com/mikevanhemert/ecos/src/config/lang"
 	"github.com/mikevanhemert/ecos/src/types"
 	"github.com/spf13/cobra"
@@ -18,7 +16,7 @@ var rootCmd = &cobra.Command{
 	Short: lang.RootCmdShort,
 	Long:  lang.RootCmdLong,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("hello from ecos")
+		cmd.Help()
 	},
 }
 

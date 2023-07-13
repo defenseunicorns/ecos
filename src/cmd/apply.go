@@ -25,10 +25,10 @@ var applyCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		archiveName := args[0]
 
-		apply := archive.NewOrDieApply(archiveName)
-		defer apply.ClearTempPaths()
+		archiver := archive.New(&ecosConfig)
+		defer archiver.ClearTempPaths()
 
-		if err := apply.Apply(); err != nil {
+		if err := archiver.Apply(archiveName); err != nil {
 			fmt.Printf("Failed to apply Terraform from archvie %s: %s\n", archiveName, err)
 			os.Exit(1)
 		}
