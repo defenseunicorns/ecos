@@ -1,0 +1,10 @@
+kind: EcosPackage
+ecosversion: 0.0.1
+metadata:
+  name: superfluous-cake
+  version: "2"
+components:
+  s3:
+    variables:
+      bucket_name:
+        default: ecos-test

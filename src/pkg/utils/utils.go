@@ -13,7 +13,6 @@ import (
 
 	goyaml "github.com/goccy/go-yaml"
 	"github.com/mholt/archiver/v3"
-	"github.com/mikevanhemert/ecos/src/types"
 	"github.com/otiai10/copy"
 )
 
@@ -70,7 +69,7 @@ func CreateDirectory(path string, mode os.FileMode) error {
 	return nil
 }
 
-func ExecCommand(command string, args ...string) error {
+func ExecCommand(command string, envVars []string, args ...string) error {
 	var (
 		stdoutBuf, stderrBuf bytes.Buffer
 		wg                   sync.WaitGroup
@@ -78,7 +77,7 @@ func ExecCommand(command string, args ...string) error {
 	)
 
 	cmd := exec.Command(command, args...)
-	cmd.Env = append(os.Environ())
+	cmd.Env = append(os.Environ(), envVars...)
 
 	cmdStdout, _ := cmd.StdoutPipe()
 	cmdStderr, _ := cmd.StderrPipe()
@@ -147,6 +146,16 @@ func MakeTempDir(tmpDir string) (string, error) {
 	return tmp, err
 }
 
+func PrintYaml(srcSpec any) error {
+	content, err := goyaml.Marshal(srcSpec)
+	if err != nil {
+		return err
+	}
+
+	fmt.Printf("%s\n\n", content)
+	return nil
+}
+
 func ReadYaml(path string, spec any) error {
 	fmt.Printf("Loading ecos spec %s\n", path)
 
@@ -155,24 +164,12 @@ func ReadYaml(path string, spec any) error {
 		return err
 	}
 
-	return goyaml.Unmarshal(file, spec)
-}
-
-func Unarchive(archiveName string, archiveDest string) (types.EcosSpec, error) {
-	fmt.Printf("Extracting archive %s\n", archiveName)
-
-	var spec = types.EcosSpec{}
-
-	if err := archiver.Unarchive(archiveName, archiveDest); err != nil {
-		return spec, fmt.Errorf("Unable to archive %s: %w", archiveName, err)
+	if err := goyaml.Unmarshal(file, spec); err != nil {
+		return err
 	}
 
-	// Read in the Ecos Spec
-	if err := ReadYaml(filepath.Join(archiveDest, "ecos.yaml"), &spec); err != nil {
-		return spec, fmt.Errorf("Unable to read the ecos.yaml file: %w", err)
-	}
-
-	return spec, nil
+	PrintYaml(spec)
+	return nil
 }
 
 func WriteFile(path string, data []byte) error {
@@ -195,9 +192,12 @@ func WriteFile(path string, data []byte) error {
 	return nil
 }
 
-func WriteYaml(path string, srcConfig any, perm fs.FileMode) error {
+func WriteYaml(path string, srcSpec any, perm fs.FileMode) error {
+	fmt.Printf("Writing spec to %s\n", path)
+	PrintYaml(srcSpec)
+
 	// Save the parsed output to the config path given
-	content, err := goyaml.Marshal(srcConfig)
+	content, err := goyaml.Marshal(srcSpec)
 	if err != nil {
 		return err
 	}

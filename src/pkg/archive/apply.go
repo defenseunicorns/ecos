@@ -8,72 +8,35 @@ import (
 	"time"
 
 	"github.com/mikevanhemert/ecos/src/pkg/utils"
-	"github.com/mikevanhemert/ecos/src/types"
 )
 
-type Apply struct {
-	archiveName string
-	config      *types.EcosConfig
-}
-
-func NewApply(archiveName string) (*Apply, error) {
-	// Create a temp directory
-	var (
-		err   error
-		apply = &Apply{
-			config:      &types.EcosConfig{},
-			archiveName: archiveName,
-		}
-	)
-
-	if apply.config.TempPaths.Base, err = utils.MakeTempDir(""); err != nil {
-		return nil, fmt.Errorf("Unable to create temp path: %w", err)
-	}
-
-	return apply, nil
-}
-
-func NewOrDieApply(archiveName string) *Apply {
-	var (
-		err   error
-		apply *Apply
-	)
-
-	if apply, err = NewApply(archiveName); err != nil {
-		fmt.Printf("Unable to prepare for apply: %s", err)
-		os.Exit(1)
-	}
-
-	return apply
-}
-
-func (a *Apply) Apply() error {
-	var err error
-
-	// Unarchive to the temp dir and read spec
-	if a.config.Spec, err = utils.Unarchive(a.archiveName, a.config.TempPaths.Base); err != nil {
+func (a *Archiver) Apply(archiveName string) error {
+	if err := a.LoadArchive(archiveName); err != nil {
 		return err
 	}
 
-	for _, component := range a.config.Spec.Components {
-		fmt.Printf("\nCOMPONENT %s\n\n", strings.ToUpper(component.Name))
+	for componentName, _ := range a.config.Spec.Components {
+		fmt.Printf("\nCOMPONENT %s\n\n", strings.ToUpper(componentName))
 
+		componentDir := filepath.Join(a.config.TempPaths.Base, "components", componentName)
 		originalDir, _ := os.Getwd()
+		envVars := []string{}
 
 		// terraform init
-		if err := os.Chdir(filepath.Join(a.config.TempPaths.Base, "components", component.Name)); err != nil {
-			return fmt.Errorf("Unable to access directory '%s': %w", component.Name, err)
+		if err := os.Chdir(componentDir); err != nil {
+			return fmt.Errorf("Unable to access directory '%s': %w", componentName, err)
 		}
 
-		if err := utils.ExecCommand("terraform", "init", "-plugin-dir", "providers", "-get=false"); err != nil {
+		if err := utils.ExecCommand("terraform", envVars, "init", "-plugin-dir", "providers", "-get=false"); err != nil {
 			return fmt.Errorf("Unable to initialize Terraform: %w", err)
 		}
 
-		_ = os.RemoveAll(filepath.Join(a.config.TempPaths.Base, "components", component.Name, "providers"))
+		_ = os.RemoveAll(filepath.Join(componentDir, "providers"))
 
 		// terraform apply
-		// TODO use variables defined in spec.component[].variables
-		if err := utils.ExecCommand("terraform", "apply", "-auto-approve", "-input=false"); err != nil {
+		envVars = a.HandleVariables(componentName)
+
+		if err := utils.ExecCommand("terraform", envVars, "apply", "-auto-approve", "-input=false"); err != nil {
 			return fmt.Errorf("Unable to apply Terraform: %w", err)
 		}
 
@@ -84,12 +47,13 @@ func (a *Apply) Apply() error {
 		os.Chdir(originalDir)
 	}
 
+	// Write the updated ecos.yaml
+	if err := utils.WriteYaml(filepath.Join(a.config.TempPaths.Base, "ecos.yaml"), a.config.Spec, 0644); err != nil {
+		return fmt.Errorf("Unable to save updated ecos.yaml spec: %w", err)
+	}
+
 	utcTime := time.Now().UTC()
-	archiveName := "ecos-" + a.config.Spec.Metadata.Name + "-" + a.config.Spec.Metadata.Version + "-" + utcTime.Format(time.RFC3339Nano) + ".tar.zst"
+	updatedArchive := "ecos-" + a.config.Spec.Metadata.Name + "-" + a.config.Spec.Metadata.Version + "-" + strings.ReplaceAll(utcTime.Format(time.RFC3339Nano), ":", ".") + ".tar.zst"
 
-	return utils.Archive(a.config.TempPaths.Base, archiveName)
-}
-
-func (a *Apply) ClearTempPaths() {
-	_ = os.RemoveAll(a.config.TempPaths.Base)
+	return utils.Archive(a.config.TempPaths.Base, updatedArchive)
 }
