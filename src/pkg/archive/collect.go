@@ -30,7 +30,7 @@ func (a *Archiver) Collect() error {
 		return fmt.Errorf("Unable to write the Ecos spec: %w", err)
 	}
 
-	for componentName, _ := range a.config.Spec.Components {
+	for componentName := range a.config.Spec.Components {
 		fmt.Printf("\nCOMPONENT %s\n\n", strings.ToUpper(componentName))
 
 		componentDir := filepath.Join(a.config.TempPaths.Base, "components", componentName)

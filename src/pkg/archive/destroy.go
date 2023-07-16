@@ -15,7 +15,7 @@ func (a *Archiver) Destroy(archiveName string) error {
 		return err
 	}
 
-	for componentName, _ := range a.config.Spec.Components {
+	for componentName := range a.config.Spec.Components {
 		fmt.Printf("\nCOMPONENT %s\n\n", strings.ToUpper(componentName))
 
 		originalDir, _ := os.Getwd()

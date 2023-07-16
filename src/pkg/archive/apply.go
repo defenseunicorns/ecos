@@ -15,7 +15,7 @@ func (a *Archiver) Apply(archiveName string) error {
 		return err
 	}
 
-	for componentName, _ := range a.config.Spec.Components {
+	for componentName := range a.config.Spec.Components {
 		fmt.Printf("\nCOMPONENT %s\n\n", strings.ToUpper(componentName))
 
 		componentDir := filepath.Join(a.config.TempPaths.Base, "components", componentName)
