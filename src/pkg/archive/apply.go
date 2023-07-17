@@ -40,9 +40,16 @@ func (a *Archiver) Apply(archiveName string) error {
 			return fmt.Errorf("Unable to apply Terraform: %w", err)
 		}
 
-		// TODO extract transitives (spec.component[].transitives) and save in variables map (a.config.PackageVariables.VariableMap)
+		// TODO extract transitives (spec.component[name].transitives[name]) and save in variables map (a.config.PackageVariables.VariableMap)
+		// 1. Extract outputs spec.components[].transitives[] to a.config.PackageVariables.VariableMap
 
 		// TODO write out ecos Template files to originalDir/out/[component]/templates/
+		// 1. Extract outputs spec.components[].templates[].variables[] to map[string]interface{}{}
+		// ... tfname -> name
+		// 2. Read the template file as bytes[] from spec.components[].templates.template
+		// 3. Flesh out the template and write the file
+		// ... tmpl, _ := template.New(/1. name/).Parse(/2. template bytes[]/)
+		// ... tmpl.Execute(/file writer/, /1. map/)
 
 		os.Chdir(originalDir)
 	}

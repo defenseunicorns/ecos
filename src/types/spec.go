@@ -16,10 +16,10 @@ type EcosMetadata struct {
 }
 
 type EcosComponent struct {
-	Description     string                  `json:"description,omitempty" jsonschema:"description=Additional information about this component"`
-	Variables       map[string]EcosVariable `json:"variables,omitempty" jsonschema:"description=Variable template values"`
-	Transitives     []EcosVariable          `json:"transitives,omitempty" jsonschema:"description=Transitive variables to pass to subsequent components"`
-	OutputTemplates []EcosOutputTemplate    `json:"templates,omitempty" jsonschema:"description=Templated output files and Terraform output mappings"`
+	Description     string                          `json:"description,omitempty" jsonschema:"description=Additional information about this component"`
+	Variables       map[string]EcosVariable         `json:"variables,omitempty" jsonschema:"description=Variable template values"`
+	Transitives     map[string]EcosTemplateVariable `json:"transitives,omitempty" jsonschema:"description=Transitive variables to pass to subsequent components"`
+	OutputTemplates map[string]EcosOutputTemplate   `json:"templates,omitempty" jsonschema:"description=Templated output files and Terraform output mappings"`
 }
 
 type EcosVariable struct {
@@ -29,13 +29,13 @@ type EcosVariable struct {
 }
 
 type EcosOutputTemplate struct {
-	Template          string                 `json:"template" jsonschema:"description=The source template file with relative path (if needed)"`
-	Description       string                 `json:"description,omitempty" jsonschema:"description=A description of the template file"`
-	TemplateVariables []EcosTemplateVariable `json:"variables" jsonschema:"description=Terraform outputs to write into this template"`
+	File              string                          `json:"file" jsonschema:"description=The source template file with relative path (if needed)"`
+	Description       string                          `json:"description,omitempty" jsonschema:"description=A description of the template file"`
+	TemplateVariables map[string]EcosTemplateVariable `json:"variables" jsonschema:"description=Terraform outputs to write into this template"`
 }
 
 type EcosTemplateVariable struct {
-	Name             string   `json:"name" jsonschema:"description=The template variable name to replaces,pattern=^[a-z0-9\\-]+$"`
+	OutputName       string   `json:"outputname" jsonschema:"description=The template variable name to replaces,pattern=^[a-z0-9\\-]+$"`
 	Description      string   `json:"description,omitaempty" jsonschema:"description=A description of the variable"`
 	TerraformName    string   `json:"tfname" jsonschema:"description=Terraform output to capture"`
 	TerraformOptions []string `json:"tfoptions,omitempty" jsonschema:"description=Terraform output options (-json, -raw)"`
