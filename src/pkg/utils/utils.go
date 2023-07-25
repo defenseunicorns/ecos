@@ -69,7 +69,7 @@ func CreateDirectory(path string, mode os.FileMode) error {
 	return nil
 }
 
-func ExecCommand(command string, envVars []string, args ...string) error {
+func ExecCommand(command string, envVars []string, args ...string) (string, error) {
 	var (
 		stdoutBuf, stderrBuf bytes.Buffer
 		wg                   sync.WaitGroup
@@ -98,7 +98,7 @@ func ExecCommand(command string, envVars []string, args ...string) error {
 	fmt.Printf("Executing command: %s %s\n", command, strings.Join(args, " "))
 
 	if err := cmd.Start(); err != nil {
-		return err
+		return "", err
 	}
 
 	wg.Add(2)
@@ -116,16 +116,16 @@ func ExecCommand(command string, envVars []string, args ...string) error {
 	wg.Wait()
 
 	if stdoutErr != nil {
-		return stdoutErr
+		return "", stdoutErr
 	}
 
 	if stderrErr != nil {
-		return stderrErr
+		return "", stderrErr
 	}
 
 	fmt.Println()
 
-	return nil
+	return stdoutBuf.String(), nil
 }
 
 func InvalidPath(path string) bool {

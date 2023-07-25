@@ -8,7 +8,9 @@ import (
 
 var (
 	logLevel   string
-	ecosConfig = types.EcosConfig{}
+	ecosConfig = types.EcosConfig{
+		PackageVariables: map[string]string{},
+	}
 )
 
 var rootCmd = &cobra.Command{

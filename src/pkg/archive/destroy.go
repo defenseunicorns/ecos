@@ -28,7 +28,7 @@ func (a *Archiver) Destroy(archiveName string) error {
 
 		envVars = a.HandleVariables(componentName)
 
-		if err := utils.ExecCommand("terraform", envVars, "destroy", "-auto-approve"); err != nil {
+		if _, err := utils.ExecCommand("terraform", envVars, "destroy", "-auto-approve"); err != nil {
 			return fmt.Errorf("Unable to destroy Terraform: %w", err)
 		}
 

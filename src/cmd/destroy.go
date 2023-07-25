@@ -13,7 +13,7 @@ func init() {
 	rootCmd.AddCommand(destroyCmd)
 
 	destroyFlags := destroyCmd.PersistentFlags()
-	destroyFlags.StringToStringVar(&ecosConfig.PackageVariables.VariableMap, "set", nil, lang.CmdApplyFlagSet)
+	destroyFlags.StringToStringVar(&ecosConfig.PackageVariables, "set", nil, lang.CmdApplyFlagSet)
 }
 
 var destroyCmd = &cobra.Command{

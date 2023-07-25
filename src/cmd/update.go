@@ -13,7 +13,7 @@ func init() {
 	rootCmd.AddCommand(updateCmd)
 
 	updateCmd := updateCmd.PersistentFlags()
-	updateCmd.StringToStringVar(&ecosConfig.PackageVariables.VariableMap, "set", nil, lang.CmdUpdateFlagSet)
+	updateCmd.StringToStringVar(&ecosConfig.PackageVariables, "set", nil, lang.CmdUpdateFlagSet)
 }
 
 var updateCmd = &cobra.Command{

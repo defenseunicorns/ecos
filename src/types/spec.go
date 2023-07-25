@@ -12,7 +12,7 @@ type EcosMetadata struct {
 	Description   string `json:"description,omitempty" jsonschema:"description=Additional information about this package"`
 	Version       string `json:"version" jsonschema:"description=Generic string set by package author to track the package version"`
 	Authors       string `json:"authors,omitempty" jsonschema:"description=Comma-separated list of package authors (including contact info),example=Josh &#60;hello@defenseunicorns.com&#62; Gedd Josh &#60;hello@defenseunicorns.com&#62;"`
-	Documentation string `json:"documenation,omitempty" jsonschema:"description=Link to package documentation"`
+	Documentation string `json:"documentation,omitempty" jsonschema:"description=Link to package documentation"`
 }
 
 type EcosComponent struct {
@@ -35,7 +35,6 @@ type EcosOutputTemplate struct {
 }
 
 type EcosTemplateVariable struct {
-	OutputName       string   `json:"outputname" jsonschema:"description=The template variable name to replaces,pattern=^[a-z0-9\\-]+$"`
 	Description      string   `json:"description,omitaempty" jsonschema:"description=A description of the variable"`
 	TerraformName    string   `json:"tfname" jsonschema:"description=Terraform output to capture"`
 	TerraformOptions []string `json:"tfoptions,omitempty" jsonschema:"description=Terraform output options (-json, -raw)"`

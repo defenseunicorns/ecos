@@ -1,0 +1,11 @@
+kind: EcosPackage
+ecosversion: 0.0.1
+metadata:
+  name: excite-bike
+  version: "1"
+components:
+  helloworld:
+    transitives:
+      message:
+        tfname: message
+        outputname: message
