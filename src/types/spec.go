@@ -29,7 +29,8 @@ type EcosVariable struct {
 }
 
 type EcosOutputTemplate struct {
-	File              string                          `json:"file" jsonschema:"description=The source template file with relative path (if needed)"`
+	Source            string                          `json:"source" jsonschema:"description=The source template file"`
+	Destination       string                          `json:"destination" jsonschema:"description=The destination file"`
 	Description       string                          `json:"description,omitempty" jsonschema:"description=A description of the template file"`
 	TemplateVariables map[string]EcosTemplateVariable `json:"variables" jsonschema:"description=Terraform outputs to write into this template"`
 }

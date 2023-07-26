@@ -65,7 +65,10 @@ func (a *Archiver) Update(archiveName string, oldArchive string) error {
 			return fmt.Errorf("Unable to extract output for component %s: %w", componentName, err)
 		}
 
-		// TODO write out ecos Template files to originalDir/out/[component]/templates/
+		// Write out ecos Template files to originalDir/out/ and componentDir/templates/
+		if err := a.HandleTemplates(componentName, originalDir, componentDir); err != nil {
+			return fmt.Errorf("Unable to process templates for component %s: %w", componentName, err)
+		}
 
 		os.Chdir(originalDir)
 	}

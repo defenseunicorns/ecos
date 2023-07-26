@@ -45,13 +45,10 @@ func (a *Archiver) Apply(archiveName string) error {
 			return fmt.Errorf("Unable to extract output for component %s: %w", componentName, err)
 		}
 
-		// TODO write out ecos Template files to originalDir/out/[component]/templates/
-		// 1. Extract outputs spec.components[].templates[].variables[] to map[string]interface{}{}
-		// ... tfname -> name
-		// 2. Read the template file as bytes[] from spec.components[].templates.template
-		// 3. Flesh out the template and write the file
-		// ... tmpl, _ := template.New(/1. name/).Parse(/2. template bytes[]/)
-		// ... tmpl.Execute(/file writer/, /1. map/)
+		// Write out ecos Template files to originalDir/out/ and componentDir/templates/
+		if err := a.HandleTemplates(componentName, originalDir, componentDir); err != nil {
+			return fmt.Errorf("Unable to process templates for component %s: %w", componentName, err)
+		}
 
 		os.Chdir(originalDir)
 	}

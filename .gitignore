@@ -1,6 +1,7 @@
 .DS_Store
 ecos
 tfwrapper
+.vscode/
 .terraform/
 *.tar.zst
 *.tar
