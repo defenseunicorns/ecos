@@ -1,0 +1,15 @@
+kind: EcosPackage
+ecosversion: 0.0.1
+metadata:
+  name: multi-love
+  version: "1"
+components:
+  helloworld:
+    templates:
+      example:
+        source: music.ecost
+        destination: music.txt
+        variables:
+          BandName: 
+            tfname: cool_name
+          

@@ -133,6 +133,10 @@ func InvalidPath(path string) bool {
 	return !os.IsPermission(err) && err != nil
 }
 
+func MakeDir(path string) error {
+	return os.Mkdir(path, 0700)
+}
+
 func MakeTempDir(tmpDir string) (string, error) {
 	// Create the base tmp directory if it is specified.
 	if tmpDir != "" {
@@ -156,6 +160,12 @@ func PrintYaml(srcSpec any) error {
 	return nil
 }
 
+func ReadFile(path string) ([]byte, error) {
+	fmt.Printf("Loading file %s\n", path)
+
+	return os.ReadFile(path)
+}
+
 func ReadYaml(path string, spec any) error {
 	fmt.Printf("Loading ecos spec %s\n", path)
 
@@ -173,6 +183,8 @@ func ReadYaml(path string, spec any) error {
 }
 
 func WriteFile(path string, data []byte) error {
+	fmt.Printf("Writing file %s\n", path)
+
 	f, err := os.Create(path)
 	if err != nil {
 		return fmt.Errorf("unable to create the file at %s to write the contents: %w", path, err)
