@@ -23,6 +23,10 @@ func New(config *types.EcosConfig) *Archiver {
 		}
 	)
 
+	if archiver.config.PackageVariables == nil {
+		archiver.config.PackageVariables = map[string]string{}
+	}
+
 	return archiver
 }
 
@@ -65,7 +69,7 @@ func (a *Archiver) HandleVariables(componentName string) []string {
 		}
 
 		// Overwrite default
-		if provided, ok := a.config.PackageVariables.VariableMap[name]; ok {
+		if provided, ok := a.config.PackageVariables[name]; ok {
 			value = provided
 			properties.Override = provided
 			a.config.Spec.Components[componentName].Variables[name] = properties

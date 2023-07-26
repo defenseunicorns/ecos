@@ -15,7 +15,7 @@ func (a *Archiver) Apply(archiveName string) error {
 		return err
 	}
 
-	for componentName, _ := range a.config.Spec.Components {
+	for componentName := range a.config.Spec.Components {
 		fmt.Printf("\nCOMPONENT %s\n\n", strings.ToUpper(componentName))
 
 		componentDir := filepath.Join(a.config.TempPaths.Base, "components", componentName)
@@ -27,7 +27,7 @@ func (a *Archiver) Apply(archiveName string) error {
 			return fmt.Errorf("Unable to access directory '%s': %w", componentName, err)
 		}
 
-		if err := utils.ExecCommand("terraform", envVars, "init", "-plugin-dir", "providers", "-get=false"); err != nil {
+		if _, err := utils.ExecCommand("terraform", envVars, "init", "-plugin-dir", "providers", "-get=false"); err != nil {
 			return fmt.Errorf("Unable to initialize Terraform: %w", err)
 		}
 
@@ -36,13 +36,22 @@ func (a *Archiver) Apply(archiveName string) error {
 		// terraform apply
 		envVars = a.HandleVariables(componentName)
 
-		if err := utils.ExecCommand("terraform", envVars, "apply", "-auto-approve", "-input=false"); err != nil {
+		if _, err := utils.ExecCommand("terraform", envVars, "apply", "-auto-approve", "-input=false"); err != nil {
 			return fmt.Errorf("Unable to apply Terraform: %w", err)
 		}
 
-		// TODO extract transitives (spec.component[].transitives) and save in variables map (a.config.PackageVariables.VariableMap)
+		// extract transitives (spec.component[name].transitives[name]) and save in variables map (a.config.PackageVariables)
+		if err := a.CollectTransitives(componentName); err != nil {
+			return fmt.Errorf("Unable to extract output for component %s: %w", componentName, err)
+		}
 
 		// TODO write out ecos Template files to originalDir/out/[component]/templates/
+		// 1. Extract outputs spec.components[].templates[].variables[] to map[string]interface{}{}
+		// ... tfname -> name
+		// 2. Read the template file as bytes[] from spec.components[].templates.template
+		// 3. Flesh out the template and write the file
+		// ... tmpl, _ := template.New(/1. name/).Parse(/2. template bytes[]/)
+		// ... tmpl.Execute(/file writer/, /1. map/)
 
 		os.Chdir(originalDir)
 	}

@@ -15,7 +15,7 @@ func (a *Archiver) Destroy(archiveName string) error {
 		return err
 	}
 
-	for componentName, _ := range a.config.Spec.Components {
+	for componentName := range a.config.Spec.Components {
 		fmt.Printf("\nCOMPONENT %s\n\n", strings.ToUpper(componentName))
 
 		originalDir, _ := os.Getwd()
@@ -28,7 +28,7 @@ func (a *Archiver) Destroy(archiveName string) error {
 
 		envVars = a.HandleVariables(componentName)
 
-		if err := utils.ExecCommand("terraform", envVars, "destroy", "-auto-approve"); err != nil {
+		if _, err := utils.ExecCommand("terraform", envVars, "destroy", "-auto-approve"); err != nil {
 			return fmt.Errorf("Unable to destroy Terraform: %w", err)
 		}
 

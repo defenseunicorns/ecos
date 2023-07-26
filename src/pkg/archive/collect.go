@@ -30,7 +30,7 @@ func (a *Archiver) Collect() error {
 		return fmt.Errorf("Unable to write the Ecos spec: %w", err)
 	}
 
-	for componentName, _ := range a.config.Spec.Components {
+	for componentName := range a.config.Spec.Components {
 		fmt.Printf("\nCOMPONENT %s\n\n", strings.ToUpper(componentName))
 
 		componentDir := filepath.Join(a.config.TempPaths.Base, "components", componentName)
@@ -46,12 +46,12 @@ func (a *Archiver) Collect() error {
 			return fmt.Errorf("Unable to access directory '%s': %w", componentName, err)
 		}
 
-		if err := utils.ExecCommand("terraform", envVars, "providers", "mirror", "providers"); err != nil {
-			return fmt.Errorf("Unable to mirror Terraform providers: %w", err)
+		if _, err := utils.ExecCommand("terraform", envVars, "providers", "mirror", "providers"); err != nil {
+			fmt.Printf("Warn: Unable to mirror Terraform providers: %s", err.Error())
 		}
 
 		// Modules: terraform get
-		if err := utils.ExecCommand("terraform", envVars, "get"); err != nil {
+		if _, err := utils.ExecCommand("terraform", envVars, "get"); err != nil {
 			return fmt.Errorf("Unable to get terraform modules: %w", err)
 		}
 

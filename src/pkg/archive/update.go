@@ -19,7 +19,7 @@ func (a *Archiver) Update(archiveName string, oldArchive string) error {
 		return err
 	}
 
-	for componentName, _ := range a.config.Spec.Components {
+	for componentName := range a.config.Spec.Components {
 		fmt.Printf("\nCOMPONENT %s\n\n", strings.ToUpper(componentName))
 
 		componentDir := filepath.Join(a.config.TempPaths.Base, "components", componentName)
@@ -48,7 +48,7 @@ func (a *Archiver) Update(archiveName string, oldArchive string) error {
 			return fmt.Errorf("Unable to access directory '%s': %w", componentName, err)
 		}
 
-		if err := utils.ExecCommand("terraform", envVars, "init", "-plugin-dir", "providers", "-get=false"); err != nil {
+		if _, err := utils.ExecCommand("terraform", envVars, "init", "-plugin-dir", "providers", "-get=false"); err != nil {
 			return fmt.Errorf("Unable to initialize Terraform: %w", err)
 		}
 
@@ -56,11 +56,14 @@ func (a *Archiver) Update(archiveName string, oldArchive string) error {
 
 		envVars = a.HandleVariables(componentName)
 
-		if err := utils.ExecCommand("terraform", envVars, "apply", "-auto-approve", "-input=false"); err != nil {
+		if _, err := utils.ExecCommand("terraform", envVars, "apply", "-auto-approve", "-input=false"); err != nil {
 			return fmt.Errorf("Unable to apply Terraform: %w", err)
 		}
 
-		// TODO extract transitives (spec.component[].transitives) and save in variables map (a.config.PackageVariables.VariableMap)
+		// extract transitives (spec.component[].transitives) and save in variables map (a.config.PackageVariables)
+		if err := a.CollectTransitives(componentName); err != nil {
+			return fmt.Errorf("Unable to extract output for component %s: %w", componentName, err)
+		}
 
 		// TODO write out ecos Template files to originalDir/out/[component]/templates/
 
