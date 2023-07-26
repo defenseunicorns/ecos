@@ -41,9 +41,6 @@ func (a *Archiver) HandleTemplates(componentName string, originalDir string, com
 			return fmt.Errorf("Unable to process template %s: %w", name, err)
 		}
 
-		// TODO delete
-		fmt.Printf("outputs %s\n", outputs)
-
 		// 2. Read the template file as bytes[] from spec.components[].templates[name].file
 		sourcePath := filepath.Join(originalDir, componentName, properties.Source)
 		templateFile, err := utils.ReadFile(sourcePath)
