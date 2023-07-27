@@ -1,0 +1,21 @@
+kind: ZarfPackageConfig
+metadata:
+  name: axolotl-facts
+  description: Axolotl's are fascinating creatures
+
+variables:
+  - name: HABITAT
+  - name: ETYMOLOGY
+  - name: BREEDING_RITUAL
+  - name: FLAVOR_PROFILE
+
+components:
+  - name: axolotl-facts
+    actions:
+      onDeploy:
+        after:
+          - cmd: |
+              echo "Axolotl habitat: ${ZARF_VAR_HABITAT}"
+              echo "'Axolotl' word history: ${ZARF_VAR_ETYMOLOGY}"
+              echo "Mating ritual: ${ZARF_VAR_BREEDING_RITUAL}"
+              echo "Axolotl flavor profile: ${ZARF_VAR_FLAVOR_PROFILE}"

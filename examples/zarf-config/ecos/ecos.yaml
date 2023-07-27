@@ -1,0 +1,20 @@
+kind: EcosPackage
+ecosversion: 0.0.1
+metadata:
+  name: axolotl-facts
+  version: "1"
+components:
+  facts:
+    templates:
+      axolotl-template:
+        source: facts.tmpl
+        destination: zarf-config.yaml
+        variables:
+          Habitat: 
+            tfname: axolotl_habitat
+          Etymology:
+            tfname: axolotl_etymology
+          BreedingRitual:
+            tfname: axolotl_breeding
+          FlavorProfile:
+            tfname: axolotl_flavor
